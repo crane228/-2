@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My game</title>
+        <meta charset="UTF-8">
+        <style>
+            .a{
+                width: 200px;
+                height: 40px;
+            }
+            
+            table{border-spacing: 3px; margin:auto;}
+            
+            .b{
+                background-color: #121312;
+                border: 0.5px solid rgb(19, 18, 18) ;  height: 10px; width: 10px;
+            }
+            .c{
+                background-color: #f6fafc;
+                border: 0.5px solid black ;  height: 10px; width: 10px;
+            }
+            .d{
+                background-color: #4de232;
+                color: #f5f6fa;
+            }
+            .e{
+                background-color: #EA2027;
+                color: #f5f6fa;
+            }
+            .g{
+                position: relative;
+                left:200px;
+            }
+           
+        </style>
+    </head>
+    <body>
+        <h1 style="text-align: center;">NICE GAME</h1>
+        <span>Enter the columns and rows:</span>
+        <form name="board">
+            <input class="a" type="text" name="row" value="50" placeholder="размер по Оx/строки">
+            <span style="left: 200px; position: relative;">LIVING CELLS:</span>
+            <input class="a g" type="text" name="g" placeholder="Enter" value="">  
+            <br><br>
+            <input class="a" type="text" name="col" value="50" placeholder="размер по Оy/столбцы">         
+            <br><br>
+            <input type="button" id="btn1" value="Create the table">
+            <input type="button" id="random" value="Generate">
+            <input type="button" id="shag" value="Launch">
+            <input type="button" class="d" id="start" value="GET ON">
+            <input type="button" class="e" id="stop" value="GET OFF">
+        </form>
+        <script>
+            var g = 0;
+            var timer;
+
+
+            function clicker(event){
+                if(event.target.tagName === "TD"){
+                    event.target.classList.toggle("b");
+                    event.target.classList.toggle("c");
+                    
+                }
+
+                if(event.target.classList.contains("b")){
+                    let od = event.target.id;
+                    var n; var m; var str;
+
+                    str=od.split(' ');
+                    n=str[0];
+                    m=str[1];
+
+                    table[parseInt(n)][parseInt(m)]=true;
+
+                }
+
+                if(event.target.classList.contains("c")){
+                    let od = event.target.id;
+                    var n; var m; var str;
+
+                    str=od.split(' ');
+                    n=str[0];
+                    m=str[1];
+
+                    table[parseInt(n)][parseInt(m)]=false;
+                    
+                }
+            }
+
+
+            var form = document.forms.board;
+            var row1 = board.row;
+            var col1 = board.col;
+            var qua = board.g;
+
+            var row2 = parseInt(row1.value);
+            var col2 = parseInt(col1.value);
+            
+            var table = [];
+
+            var new_table = [];
+
+
+
+            function createGameBoard(parentElem,row,col){
+                
+                parentElem = parentElem || document.body;
+                col = parseInt(row1.value) || 10; 
+                row = parseInt(col1.value) || 10;
+
+                
+                var board = document.createElement('table');
+                board.addEventListener("click", clicker);
+                board.id="board1";
+                
+                for (let i=0; i<row; i++){
+                    var tr = document.createElement('tr');
+                    table[i]=[];
+
+                    new_table[i]=[];
+
+
+                    for (let j=0; j<col; j++){
+                        var td = document.createElement('td');
+                        table[i][j]=false; 
+
+                        new_table[i][j]=false;
+
+                        td.id=(String(i) +" "+ String(j));
+                                                                    
+                        td.className="c";
+
+                        tr.appendChild(td); 
+                    }
+                    board.appendChild(tr);
+
+                }
+                parentElem.appendChild(board);
+
+                
+            }
+            var td1 = document.getElementsByTagName('td');
+
+            document.getElementById('btn1').onclick = function(){
+                var checkBoard = document.getElementById("board1"); 
+                if(checkBoard!=null){checkBoard.remove()};
+                createGameBoard(document.body,row2,col2);
+                }
+
+
+
+            document.getElementById('shag').onclick = life;
+                
+
+            function life(){
+                row=parseInt(row1.value); 
+                col=parseInt(col1.value);
+
+                for(let i=0; i<row; i++){
+
+                    for (let j=0; j<col; j++){
+
+                        new_table[i][j]=table[i][j];
+                    }
+                }
+                for(let i=0; i<row; i++){
+
+                    for(let j=0; j<col; j++){
+                        let neighbor = 0;
+                        if((i-1)>=0 && (i+1)<=row-1){
+                            if(table[i-1][j-1]==true){neighbor=neighbor+1;};
+                            if(table[i-1][j-1]==undefined){if(table[i-1][col-1]==true){neighbor=neighbor+1;};};
+                            if(table[i-1][j]==true){neighbor=neighbor+1};
+                            if(table[i-1][j+1]==true){neighbor=neighbor+1};
+                            if(table[i-1][j+1]==undefined){if(table[i-1][0]==true){neighbor=neighbor+1};};
+                            if(table[i][j-1]==true){neighbor=neighbor+1;};
+                            if(table[i][j-1]==undefined){if(table[i][col-1]==true){neighbor=neighbor+1;};};
+                            if(table[i][j+1]==true){neighbor=neighbor+1};
+                            if(table[i][j+1]==undefined){if(table[i][0]==true){neighbor=neighbor+1;};};
+                            if(table[i+1][j-1]==true){neighbor=neighbor+1;};
+                            if(table[i+1][j-1]==undefined){if(table[i+1][col-1]==true){neighbor=neighbor+1;};};
+                            if(table[i+1][j]==true){neighbor=neighbor+1;};
+                            if(table[i+1][j+1]==true){neighbor=neighbor+1;};
+                            if(table[i+1][j+1]==undefined){if(table[i+1][0]==true){neighbor=neighbor+1;};};
+                        }
+                        if((i==0)){
+                           if(table[row-1][j-1]==true){neighbor=neighbor+1;};
+                           if(table[row-1][j-1]==undefined){if(table[row-1][col-1]==true){neighbor=neighbor+1;};};
+                           if(table[row-1][j]==true){neighbor=neighbor+1;};
+                           if(table[row-1][j+1]==true){neighbor=neighbor+1;};
+                           if(table[row-1][j+1]==undefined){if(table[row-1][0]==true){neighbor=neighbor+1;};};
+                           if(table[i][j-1]==true){neighbor=neighbor+1;};
+                           if(table[i][j-1]==undefined){if(table[i][col-1]==true){neighbor=neighbor+1;};};
+                           if(table[i][j+1]==true){neighbor=neighbor+1;};
+                           if(table[i][j+1]==undefined){if(table[i][0]==true){neighbor=neighbor+1;};};
+                           if(table[i+1][j-1]==true){neighbor=neighbor+1;};
+                           if(table[i+1][j-1]==undefined){if(table[i+1][col-1]==true){neighbor=neighbor+1;};};
+                           if(table[i+1][j]==true){neighbor=neighbor+1;};
+                           if(table[i+1][j+1]==true){neighbor=neighbor+1;};
+                           if(table[i+1][j+1]==undefined){if(table[i+1][0]==true){neighbor=neighbor+1;};};
+                        }
+                        if(i==row-1){
+
+                            if(table[0][j-1]==true){neighbor=neighbor+1;};
+                            if(table[0][j-1]==undefined){if(table[0][col-1]==true){neighbor=neighbor+1;};};
+                            if(table[0][j]==true){neighbor=neighbor+1;};
+                            if(table[0][j+1]==true){neighbor=neighbor+1;};
+                            if(table[0][j+1]==undefined){if(table[0][0]==true){neighbor=neighbor+1;};};
+                            if(table[i][j-1]==true){neighbor=neighbor+1;};
+                            if(table[i][j-1]==undefined){if(table[i][col-1]==true){neighbor=neighbor+1;};};
+                            if(table[i][j+1]==true){neighbor=neighbor+1;};                                          
+                            if(table[i][j+1]==undefined){if(table[i][0]==true){neighbor=neighbor+1;};}; 
+                            if(table[i-1][j-1]==true){neighbor=neighbor+1;};    //
+                            if(table[i-1][j-1]==undefined){if(table[i-1][col-1]==true){neighbor=neighbor+1;};};
+                            if(table[i-1][j]==true){neighbor=neighbor+1;};
+                            if(table[i-1][j+1]==true){neighbor=neighbor+1;};
+                            if(table[i-1][j+1]==undefined){if(table[i-1][0]==true){neighbor=neighbor+1;};};
+
+                        }
+                        if(neighbor>3 && table[i][j]==true){new_table[i][j]=false;};
+                        if(neighbor<2 && table[i][j]==true){new_table[i][j]=false;};
+                        if(neighbor==3 && table[i][j]==false){new_table[i][j]=true;};
+                        if((neighbor==3 || neighbor==2) && table[i][j]==true){new_table[i][j]=true}
+                    }   
+                }
+                for(let i=0; i<row; i++){
+                    for(let j=0; j<col; j++){
+                        if(new_table[i][j]==true){
+                            let td_check = document.getElementById(String(i)+" "+String(j));
+                            td_check.classList.remove("c");
+                            td_check.classList.add("b");
+                        }
+                        if(new_table[i][j]==false){
+                            let td_check = document.getElementById(String(i)+" "+String(j));
+                            td_check.classList.remove("b");
+                            td_check.classList.add("c");
+                        }
+                    }
+                }
+                for(let i=0; i<row; i++){
+                    for(let j=0; j<col; j++){
+                        table[i][j]=new_table[i][j];
+                    }
+                }
+            }
+
+            document.getElementById("start").onclick=start;
+
+            function start(){
+                timer=setInterval(life,100);
+                
+            }
+
+            document.getElementById("stop").onclick = stop; 
+
+            function stop(){
+                clearTimeout(timer);
+            }
+
+            document.getElementById("random").onclick = randomize;
+            var zu;
+
+            function randomize(){
+                row = parseInt(row1.value);
+                col = parseInt(col1.value);  
+                g = parseInt(qua.value);
+                if(qua.value == ""){alert("Введите количество живых клеток")};
+            for(let i=0; i<row; i++){
+                for(let j=0; j<col; j++){
+                    table[i][j]=false;
+                    let td_check = document.getElementById(String(i)+" "+String(j));
+                    td_check.classList.remove("b");
+                    td_check.classList.add("c");
+                }
+            }
+
+                    while(g>0){
+                        let a=Math.floor(Math.random() * (row) + 0);
+                        let b=Math.floor(Math.random() * (col) + 0);
+                        if(table[a][b]==true){
+                            g++;
+                        }
+                        else{
+                            table[a][b]=true;
+                        }   
+                        g--;
+                    } 
+                    for(let i=0; i<row; i++){
+                        for(let j=0; j<col; j++){
+                            if(table[i][j]==true){
+                            let td_check = document.getElementById(String(i)+" "+String(j));
+                            td_check.classList.remove("c");
+                            td_check.classList.add("b");
+                        }
+                        if(table[i][j]==false){
+                            let td_check = document.getElementById(String(i)+" "+String(j));
+                            td_check.classList.remove("b");
+                            td_check.classList.add("c");
+                        }
+
+                        }
+                    }
+                }
+
+            document.getElementById("clean").onclick = clean;
+
+            function clean(){
+                row = parseInt(row1.value);
+                col = parseInt(col1.value); 
+                for(let i=0; i<row; i++){
+                    for(let j=0; j<col; j++){
+                        table[i][j]=false;
+                        let td_check = document.getElementById(String(i)+" "+String(j));
+                        td_check.classList.remove("b");
+                        td_check.classList.add("c");
+                    }
+                }
+                clearTimeout(timer); 
+            }
+        
+        </script>
+    </body>
+</html>
